@@ -1,9 +1,26 @@
+import RequestConfig from './config';
 import fetchMethod from './fetch';
 import { Request } from './interface';
 
 class RequestClass {
+  config = new RequestConfig();
+
   private fetch(url: string, params: any, options: RequestInit) {
-    return fetchMethod(url, params, options);
+    const { $beforeHook, $afterHook, $dataHook, $errorHook } = this.config;
+
+    $beforeHook();
+    return fetchMethod(url, params, options).then(
+      res => {
+        console.log(res)
+        $afterHook();
+        return $dataHook();
+      },
+      err => {
+        console.log(err)
+        $afterHook();
+        return $errorHook();
+      }
+    );
   }
 
   get(url: string, params?: any, options?: RequestInit) {
@@ -20,12 +37,13 @@ class RequestClass {
   }
 }
 
-const requestClass = new RequestClass();
+const entity = new RequestClass();
 
-const request: Request = requestClass.get as Request;
-request.get = requestClass.get;
-request.post = requestClass.get;
-request.put = requestClass.get;
-request.delete = requestClass.get;
+const request: Request = entity.get as Request;
+request.config = entity.config;
+request.get = entity.get;
+request.post = entity.post;
+request.put = entity.put;
+request.delete = entity.delete;
 
 export default request;
