@@ -1,9 +1,17 @@
 import RequestConfig from './config';
 
+export type ResponseType = 'json' | 'blob' | 'text';
+
+export interface RequestOptions extends RequestInit {
+  params?: any;
+  responseType?: ResponseType;
+  getResponse?: boolean;
+}
+
 export type RequestMethod = (
   url: string,
   params?: any,
-  options?: RequestInit
+  options?: RequestOptions
 ) => Promise<any>;
 
 export interface Request extends RequestMethod {

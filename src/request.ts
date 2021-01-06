@@ -1,39 +1,37 @@
 import RequestConfig from './config';
 import fetchMethod from './fetch';
-import { Request } from './interface';
+import { Request, RequestOptions } from './interface';
 
 class RequestClass {
   config = new RequestConfig();
 
-  private fetch(url: string, params: any, options: RequestInit) {
+  private fetch(url: string, options: RequestOptions) {
     const { $beforeHook, $afterHook, $dataHook, $errorHook } = this.config;
 
-    $beforeHook();
-    return fetchMethod(url, params, options).then(
+    $beforeHook(url, options);
+    return fetchMethod(url, options).then(
       res => {
-        console.log(res)
-        $afterHook();
-        return $dataHook();
+        $afterHook(url, options);
+        return $dataHook(url, options, res);
       },
       err => {
-        console.log(err)
-        $afterHook();
-        return $errorHook();
+        $afterHook(url, options);
+        return $errorHook(url, options, err);
       }
     );
   }
 
-  get(url: string, params?: any, options?: RequestInit) {
-    return this.fetch(url, params, { ...options, method: 'get' });
+  get(url: string, params?: any, options?: RequestOptions) {
+    return this.fetch(url, { ...options, method: 'get', params });
   }
-  post(url: string, params?: any, options?: RequestInit) {
-    return this.fetch(url, params, { ...options, method: 'post' });
+  post(url: string, params?: any, options?: RequestOptions) {
+    return this.fetch(url, { ...options, method: 'post', params });
   }
-  put(url: string, params?: any, options?: RequestInit) {
-    return this.fetch(url, params, { ...options, method: 'put' });
+  put(url: string, params?: any, options?: RequestOptions) {
+    return this.fetch(url, { ...options, method: 'put', params });
   }
-  delete(url: string, params?: any, options?: RequestInit) {
-    return this.fetch(url, params, { ...options, method: 'delete' });
+  delete(url: string, params?: any, options?: RequestOptions) {
+    return this.fetch(url, { ...options, method: 'delete', params });
   }
 }
 

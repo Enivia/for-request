@@ -1,9 +1,19 @@
+import { RequestOptions } from './interface';
+
 const noop = (_: any) => _;
 
-export type TBeforeHook = (...args: any) => void;
-export type TAfterHook = (...args: any) => void;
-export type TDataHook = (...args: any) => void;
-export type TErrorHook = (...args: any) => void;
+export type TBeforeHook = (url: string, options: RequestOptions) => void;
+export type TAfterHook = (url: string, options: RequestOptions) => void;
+export type TDataHook = (
+  url: string,
+  options: RequestOptions,
+  result: any
+) => void;
+export type TErrorHook = (
+  url: string,
+  options: RequestOptions,
+  error: any
+) => void;
 
 class RequestConfig {
   $beforeHook: TBeforeHook = noop;
