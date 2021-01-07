@@ -6,6 +6,8 @@ export interface RequestOptions extends RequestInit {
   params?: any;
   responseType?: ResponseType;
   getResponse?: boolean;
+  serializeParams?: boolean;
+  prefix?: string;
 }
 
 export type RequestMethod = (
