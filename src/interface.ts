@@ -17,7 +17,10 @@ export type RequestMethod = (
 ) => Promise<any>;
 
 export interface Request extends RequestMethod {
-  config: Pick<RequestConfig, 'before' | 'after' | 'data' | 'error'>;
+  config: Pick<
+    RequestConfig,
+    'setOptions' | 'before' | 'after' | 'data' | 'error'
+  >;
   get: RequestMethod;
   post: RequestMethod;
   put: RequestMethod;

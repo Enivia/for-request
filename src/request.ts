@@ -1,47 +1,42 @@
 import RequestConfig from './config';
-import fetchMethod from './fetch';
-import { Request, RequestOptions } from './interface';
+import fetch from './fetch';
+import { RequestOptions } from './interface';
 
 class RequestClass {
   config = new RequestConfig();
 
-  private fetch(url: string, options: RequestOptions) {
+  private $fetch(url: string, options: RequestOptions) {
     const { $beforeHook, $afterHook, $dataHook, $errorHook } = this.config;
+    const requestOptions = { ...this.config.options, ...options };
 
-    $beforeHook(url, options);
-    return fetchMethod(url, options).then(
+    $beforeHook(url, requestOptions);
+    return fetch(url, requestOptions).then(
       res => {
-        $afterHook(url, options);
-        return $dataHook(url, options, res);
+        $afterHook(url, requestOptions);
+        return $dataHook(res, url, requestOptions);
       },
       err => {
-        $afterHook(url, options);
-        return $errorHook(url, options, err);
+        $afterHook(url, requestOptions);
+        return $errorHook(err, url, requestOptions);
       }
     );
   }
 
+  request(url: string, params?: any, options?: RequestOptions) {
+    return this.$fetch(url, { ...options, params });
+  }
   get(url: string, params?: any, options?: RequestOptions) {
-    return this.fetch(url, { ...options, method: 'get', params });
+    return this.$fetch(url, { ...options, method: 'get', params });
   }
   post(url: string, params?: any, options?: RequestOptions) {
-    return this.fetch(url, { ...options, method: 'post', params });
+    return this.$fetch(url, { ...options, method: 'post', params });
   }
   put(url: string, params?: any, options?: RequestOptions) {
-    return this.fetch(url, { ...options, method: 'put', params });
+    return this.$fetch(url, { ...options, method: 'put', params });
   }
   delete(url: string, params?: any, options?: RequestOptions) {
-    return this.fetch(url, { ...options, method: 'delete', params });
+    return this.$fetch(url, { ...options, method: 'delete', params });
   }
 }
 
-const entity = new RequestClass();
-
-const request: Request = entity.get as Request;
-request.config = entity.config;
-request.get = entity.get;
-request.post = entity.post;
-request.put = entity.put;
-request.delete = entity.delete;
-
-export default request;
+export default RequestClass;

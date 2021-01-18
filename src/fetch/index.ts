@@ -19,7 +19,6 @@ function getRequestOptions(options: RequestOptions): RequestOptions {
 
 function fetchMethod(url: string, options: RequestOptions) {
   const requestOptions = getRequestOptions(options);
-  console.log('fetch method called:', url, requestOptions);
   const {
     responseType,
     getResponse,
@@ -32,15 +31,18 @@ function fetchMethod(url: string, options: RequestOptions) {
   let requestUrl = `${prefix}${url}`;
   if (requestInit.method === 'GET' || serializeParams) {
     const serializedParams = serialize(params);
-    const joiner = url.indexOf('?') >= 0 ? '&' : '?';
-    requestUrl = `${url}${joiner}${serializedParams}`;
+    if (serializeParams) {
+      const joiner = url.indexOf('?') >= 0 ? '&' : '?';
+      requestUrl = `${requestUrl}${joiner}${serializedParams}`;
+    }
   } else {
     requestInit.body = params;
   }
+  console.log('fetch method called:', requestUrl, requestOptions);
 
   return new Promise((resolve, reject) => {
     fetch(requestUrl, requestInit)
-      .then(res => parseResponse(res, options))
+      .then(res => parseResponse(res, requestOptions))
       .then(resolve)
       .catch(reject);
   });

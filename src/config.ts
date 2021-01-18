@@ -5,22 +5,26 @@ const noop = (_: any) => _;
 export type TBeforeHook = (url: string, options: RequestOptions) => void;
 export type TAfterHook = (url: string, options: RequestOptions) => void;
 export type TDataHook = (
+  result: any,
   url: string,
-  options: RequestOptions,
-  result: any
-) => void;
+  options: RequestOptions
+) => any;
 export type TErrorHook = (
+  error: any,
   url: string,
-  options: RequestOptions,
-  error: any
-) => void;
+  options: RequestOptions
+) => any;
 
 class RequestConfig {
+  options: RequestOptions = {};
   $beforeHook: TBeforeHook = noop;
   $afterHook: TAfterHook = noop;
   $dataHook: TDataHook = noop;
   $errorHook: TErrorHook = noop;
 
+  setOptions(options: RequestOptions) {
+    this.options = options;
+  }
   before(hook: TBeforeHook) {
     this.$beforeHook = hook;
     return this;
