@@ -22,12 +22,14 @@ jobs:
       - name: Check if version has been updated
         id: check
         uses: EndBug/version-check@v1
+        with:
+          file-url: https://unpkg.com/for-request@latest/package.json
 
-      - name: Log when changed
-        if: steps.check.outputs.changed == 'true'
-        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+      # - name: Log when changed
+      #   if: steps.check.outputs.changed == 'true'
+      #   run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
 
-      - name: Log when unchanged
+      - name: Version unchanged
         if: steps.check.outputs.changed == 'false'
         run: exit 1
 
@@ -47,4 +49,3 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_AUTH_TOKEN }}
-          file-url: https://unpkg.com/for-request@latest/package.json
