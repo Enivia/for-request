@@ -32,7 +32,7 @@
     "trailingComma": "es5"
   },
   "name": "for-request",
-  "author": "qingchuchu",
+  "author": "Enivia",
   "module": "dist/for-request.esm.js",
   "size-limit": [
     {
