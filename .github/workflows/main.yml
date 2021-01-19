@@ -29,7 +29,7 @@ jobs:
 
       - name: Log when unchanged
         if: steps.check.outputs.changed == 'false'
-        run: "exit 0"
+        run: exit 1
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
@@ -47,3 +47,4 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_AUTH_TOKEN }}
+          file-url: https://unpkg.com/for-request@latest/package.json
