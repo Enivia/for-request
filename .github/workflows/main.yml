@@ -7,22 +7,6 @@ on:
     branches: [master]
 
 jobs:
-  check-version:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check if version has been updated
-        id: check
-        uses: EndBug/version-check@v1
-
-      - name: Log when changed
-        if: steps.check.outputs.changed == 'true'
-        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
-
-      - name: Log when unchanged
-        if: steps.check.outputs.changed == 'false'
-        run: "exit 0"
-
   npm-publish:
     runs-on: ubuntu-latest
 
@@ -34,6 +18,18 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 14.x
+
+      - name: Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v1
+
+      - name: Log when changed
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+
+      - name: Log when unchanged
+        if: steps.check.outputs.changed == 'false'
+        run: "exit 0"
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1

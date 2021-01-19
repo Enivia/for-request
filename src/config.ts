@@ -4,16 +4,8 @@ const noop = (_: any) => _;
 
 export type TBeforeHook = (url: string, options: RequestOptions) => void;
 export type TAfterHook = (url: string, options: RequestOptions) => void;
-export type TDataHook = (
-  result: any,
-  url: string,
-  options: RequestOptions
-) => any;
-export type TErrorHook = (
-  error: any,
-  url: string,
-  options: RequestOptions
-) => any;
+export type TDataHook = (result: any, url: string, options: RequestOptions) => any;
+export type TErrorHook = (error: any, url: string, options: RequestOptions) => any;
 
 class RequestConfig {
   options: RequestOptions = {};

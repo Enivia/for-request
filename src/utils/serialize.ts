@@ -13,9 +13,7 @@ export function getPrototype(obj: object) {
 }
 
 export function isURLSearchParams(val: any): boolean {
-  return (
-    typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams
-  );
+  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
 }
 
 export function isArray(val: any): boolean {

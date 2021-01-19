@@ -1,9 +1,6 @@
 import { RequestOptions } from '../interface';
 
-export default function parseResponse(
-  response: Response,
-  options: RequestOptions
-) {
+export default function parseResponse(response: Response, options: RequestOptions) {
   const { responseType, getResponse } = options;
 
   // @ts-ignore
