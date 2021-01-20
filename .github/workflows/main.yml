@@ -19,20 +19,6 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Check if version has been updated
-        id: check
-        uses: EndBug/version-check@v1
-        with:
-          file-url: https://unpkg.com/for-request@latest/package.json
-
-      # - name: Log when changed
-      #   if: steps.check.outputs.changed == 'true'
-      #   run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
-
-      - name: Version unchanged
-        if: steps.check.outputs.changed == 'false'
-        run: exit 1
-
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
 
@@ -41,6 +27,16 @@ jobs:
 
       - name: Test
         run: yarn test --ci --coverage --maxWorkers=2
+
+      - name: Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v1
+        with:
+          file-url: https://unpkg.com/for-request@latest/package.json
+
+      - name: Version unchanged
+        if: steps.check.outputs.changed == 'false'
+        run: exit 1
 
       - name: Build
         run: yarn build
