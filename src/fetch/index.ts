@@ -30,15 +30,15 @@ function fetchMethod(url: string, options: RequestOptions) {
 
   let requestUrl = `${prefix}${url}`;
   if (requestInit.method === 'GET' || serializeParams) {
-    const serializedParams = serialize(params);
-    if (serializeParams) {
+    const serialized = serialize(params);
+    if (serialized) {
       const joiner = url.indexOf('?') >= 0 ? '&' : '?';
-      requestUrl = `${requestUrl}${joiner}${serializedParams}`;
+      requestUrl = `${requestUrl}${joiner}${serialized}`;
     }
   } else {
     requestInit.body = params;
   }
-  console.log('fetch method called:', requestUrl, requestOptions);
+  // console.log('fetch method called:', requestUrl, requestOptions);
 
   return new Promise((resolve, reject) => {
     fetch(requestUrl, requestInit)
