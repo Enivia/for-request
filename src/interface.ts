@@ -1,4 +1,4 @@
-import RequestConfig from './config';
+import { RequestConfig } from './config';
 
 export type ResponseType = 'json' | 'blob' | 'text';
 
@@ -17,7 +17,7 @@ export type RequestMethod = (
 ) => Promise<any>;
 
 export interface Request extends RequestMethod {
-  config: Pick<RequestConfig, 'setOptions' | 'before' | 'after' | 'data' | 'error'>;
+  config: RequestConfig;
   get: RequestMethod;
   post: RequestMethod;
   put: RequestMethod;
