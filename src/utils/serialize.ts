@@ -28,6 +28,10 @@ export function isObject(val: any): boolean {
   return val !== null && typeof val === 'object';
 }
 
+/**
+ * qs stringify params https://github.com/ljharb/qs
+ * @param params
+ */
 export function stringifyParams(params: any) {
   return stringify(params, { arrayFormat: 'repeat', strictNullHandling: true });
 }
@@ -61,6 +65,21 @@ export function forEachObjectNArray(
 }
 
 /**
+ * param fields to string
+ * @param value
+ */
+export function value2String(value: any) {
+  if (isUoN(value) || isArray(value)) {
+    return value;
+  } else if (isObject(value)) {
+    return JSON.stringify(value);
+  } else if (isDate(value)) {
+    return value.toISOString();
+  }
+  return value;
+}
+
+/**
  * serialize params
  * @param params
  */
@@ -72,30 +91,15 @@ export default function serialize(params: any) {
   }
 
   if (isArray(params)) {
-    const arr: any[] = [];
-    forEachObjectNArray(params, (item: any) => {
-      if (isUoN(item)) {
-        arr.push(item);
-      } else {
-        arr.push(isObject(item) ? JSON.stringify(item) : item);
-      }
-    });
-    return stringifyParams(arr);
+    const array: any[] = [];
+    forEachObjectNArray(params, (item: any) => array.push(value2String(item)));
+    return stringifyParams(array);
   }
 
-  const jsonStringifyParams: { [k: string]: string } = {};
+  const params2String: { [k: string]: string } = {};
   forEachObjectNArray(params, (value, key) => {
-    let stringifiedValue = value;
-    if (isUoN(value)) {
-      stringifiedValue = value;
-    } else if (isDate(value)) {
-      stringifiedValue = value.toISOString();
-    } else if (isArray(value)) {
-      stringifiedValue = value;
-    } else if (isObject(value)) {
-      stringifiedValue = JSON.stringify(value);
-    }
-    jsonStringifyParams[key] = stringifiedValue;
+    let stringifiedValue = value2String(value);
+    params2String[key] = stringifiedValue;
   });
-  return stringifyParams(jsonStringifyParams);
+  return stringifyParams(params2String);
 }

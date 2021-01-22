@@ -1,6 +1,6 @@
 import { RequestOptions } from '../interface';
 import parseResponse from '../utils/parse-response';
-import serialize from '../utils/serialize';
+import serialize, { stringifyParams } from '../utils/serialize';
 
 function getRequestMethod(method?: string) {
   return !method ? 'GET' : method.toUpperCase();
@@ -36,7 +36,7 @@ function fetchMethod(url: string, options: RequestOptions) {
       requestUrl = `${requestUrl}${joiner}${serialized}`;
     }
   } else {
-    requestInit.body = params;
+    requestInit.body = stringifyParams(params);
   }
   // console.log('fetch method called:', requestUrl, requestOptions);
 

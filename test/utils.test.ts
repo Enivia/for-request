@@ -1,7 +1,7 @@
 import serialize from '../src/utils/serialize';
 
-describe('test utils:', () => {
-  describe('serialize:', () => {
+describe('utils', () => {
+  describe('serialize', () => {
     it('empty', () => {
       expect(serialize({})).toBe('');
       expect(serialize([])).toBe('');
