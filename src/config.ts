@@ -1,13 +1,13 @@
-import { RequestOptions } from './interface';
+import {
+  RequestConfig,
+  RequestOptions,
+  TAfterHook,
+  TBeforeHook,
+  TDataHook,
+  TErrorHook,
+} from './interface';
 
 const noop = (_: any) => _;
-
-export type TBeforeHook = (url: string, options: RequestOptions) => void;
-export type TAfterHook = (url: string, options: RequestOptions) => void;
-export type TDataHook = (result: any, url: string, options: RequestOptions) => any;
-export type TErrorHook = (error: any, url: string, options: RequestOptions) => any;
-
-type RequestConfig = Pick<Config, 'setOptions' | 'before' | 'after' | 'data' | 'error'>;
 
 class Config {
   options: RequestOptions = {};
@@ -39,4 +39,3 @@ class Config {
 }
 
 export default Config;
-export { RequestConfig };

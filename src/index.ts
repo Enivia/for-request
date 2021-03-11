@@ -10,3 +10,4 @@ request.put = (...args) => entity.put(...args);
 request.delete = (...args) => entity.delete(...args);
 
 export default request;
+export { Request };
