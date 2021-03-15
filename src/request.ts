@@ -1,9 +1,22 @@
 import RequestConfig from './config';
 import fetch from './fetch';
-import { RequestOptions } from './interface';
+import { RequestOptions, Request } from './interface';
 
 class RequestClass {
   config = new RequestConfig();
+
+  get request() {
+    const exportRequest = ((url: string, params?: any, options?: RequestOptions) => {
+      return this.$fetch(url, { ...options, params });
+    }) as Request;
+
+    exportRequest.config = this.config;
+    exportRequest.get = this.get.bind(this);
+    exportRequest.post = this.post.bind(this);
+    exportRequest.put = this.put.bind(this);
+    exportRequest.delete = this.delete.bind(this);
+    return exportRequest;
+  }
 
   private $fetch(url: string, options: RequestOptions) {
     const { $beforeHook, $afterHook, $dataHook, $errorHook } = this.config;
@@ -22,9 +35,6 @@ class RequestClass {
     );
   }
 
-  request(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { ...options, params });
-  }
   get(url: string, params?: any, options?: RequestOptions) {
     return this.$fetch(url, { ...options, method: 'get', params });
   }
