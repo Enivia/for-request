@@ -2,12 +2,23 @@ import Config from './config';
 
 export type ResponseType = 'json' | 'blob' | 'text';
 
-export interface RequestOptions extends RequestInit {
+export interface RequestOptionsInit extends RequestInit {
   params?: any;
   responseType?: ResponseType;
   getResponse?: boolean;
   serializeParams?: boolean;
   prefix?: string;
+}
+
+export interface RequestOptions extends RequestOptionsInit {
+  beforeHook?: TBeforeHook;
+  afterHook?: TAfterHook;
+  dataHook?: TDataHook;
+  errorHook?: TErrorHook;
+  disabledBeforeHook?: boolean;
+  disabledAfterHook?: boolean;
+  disabledDataHook?: boolean;
+  disabledErrorHook?: boolean;
 }
 
 export type RequestMethod = <T>(

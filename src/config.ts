@@ -1,22 +1,22 @@
 import {
   RequestConfig,
-  RequestOptions,
+  RequestOptionsInit,
   TAfterHook,
   TBeforeHook,
   TDataHook,
   TErrorHook,
 } from './interface';
 
-const noop = (_: any) => _;
+export const noop = (_: any) => _;
 
 class Config {
-  options: RequestOptions = {};
+  options: RequestOptionsInit = {};
   $beforeHook: TBeforeHook = noop;
   $afterHook: TAfterHook = noop;
   $dataHook: TDataHook = noop;
   $errorHook: TErrorHook = noop;
 
-  setOptions(options: RequestOptions): RequestConfig {
+  setOptions(options: RequestOptionsInit): RequestConfig {
     this.options = options;
     return this;
   }

@@ -1,6 +1,6 @@
-import RequestConfig from './config';
+import RequestConfig, { noop } from './config';
 import fetch from './fetch';
-import { RequestOptions, Request } from './interface';
+import { RequestOptions, Request, RequestOptionsInit } from './interface';
 
 class RequestClass {
   config = new RequestConfig();
@@ -18,19 +18,49 @@ class RequestClass {
     return exportRequest;
   }
 
-  private $fetch(url: string, options: RequestOptions) {
-    const { $beforeHook, $afterHook, $dataHook, $errorHook } = this.config;
-    const requestOptions = { ...this.config.options, ...options };
+  private $getOptions(
+    options: RequestOptions
+  ): RequestOptionsInit &
+    Pick<RequestConfig, '$beforeHook' | '$afterHook' | '$dataHook' | '$errorHook'> {
+    const {
+      dataHook,
+      errorHook,
+      beforeHook,
+      afterHook,
+      disabledBeforeHook,
+      disabledAfterHook,
+      disabledDataHook,
+      disabledErrorHook,
+      ...optionsInit
+    } = { ...this.config.options, ...options };
 
-    $beforeHook(url, requestOptions);
-    return fetch(url, requestOptions).then(
+    const $beforeHook = disabledBeforeHook
+      ? noop
+      : beforeHook || this.config.$beforeHook;
+    const $afterHook = disabledAfterHook ? noop : afterHook || this.config.$afterHook;
+    const $dataHook = disabledDataHook ? noop : dataHook || this.config.$dataHook;
+    const $errorHook = disabledErrorHook ? noop : errorHook || this.config.$errorHook;
+    return { $beforeHook, $afterHook, $dataHook, $errorHook, ...optionsInit };
+  }
+
+  private $fetch(url: string, options: RequestOptions) {
+    const {
+      $beforeHook,
+      $afterHook,
+      $dataHook,
+      $errorHook,
+      ...optionsInit
+    } = this.$getOptions(options);
+
+    $beforeHook(url, optionsInit);
+    return fetch(url, optionsInit).then(
       res => {
-        $afterHook(url, requestOptions);
-        return $dataHook(res, url, requestOptions);
+        $afterHook(url, optionsInit);
+        return $dataHook(res, url, optionsInit);
       },
       err => {
-        $afterHook(url, requestOptions);
-        return $errorHook(err, url, requestOptions);
+        $afterHook(url, optionsInit);
+        return $errorHook(err, url, optionsInit);
       }
     );
   }

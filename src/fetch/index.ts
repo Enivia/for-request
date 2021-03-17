@@ -1,4 +1,4 @@
-import { RequestOptions } from '../interface';
+import { RequestOptionsInit } from '../interface';
 import parseResponse from '../utils/parse-response';
 import serialize, { stringifyParams } from '../utils/serialize';
 
@@ -6,9 +6,9 @@ function getRequestMethod(method?: string) {
   return !method ? 'GET' : method.toUpperCase();
 }
 
-function getRequestOptions(options: RequestOptions): RequestOptions {
+function getRequestOptions(options: RequestOptionsInit): RequestOptionsInit {
   const method = getRequestMethod(options.method);
-  const requestOptions: RequestOptions = {
+  const requestOptions: RequestOptionsInit = {
     ...options,
     method,
     responseType: options.responseType || 'json',
@@ -17,7 +17,7 @@ function getRequestOptions(options: RequestOptions): RequestOptions {
   return requestOptions;
 }
 
-function fetchMethod(url: string, options: RequestOptions) {
+function fetchMethod(url: string, options: RequestOptionsInit) {
   const requestOptions = getRequestOptions(options);
   const {
     responseType,
