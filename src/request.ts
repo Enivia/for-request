@@ -34,9 +34,7 @@ class RequestClass {
       ...optionsInit
     } = { ...this.config.options, ...options };
 
-    const $beforeHook = disabledBeforeHook
-      ? noop
-      : beforeHook || this.config.$beforeHook;
+    const $beforeHook = disabledBeforeHook ? noop : beforeHook || this.config.$beforeHook;
     const $afterHook = disabledAfterHook ? noop : afterHook || this.config.$afterHook;
     const $dataHook = disabledDataHook ? noop : dataHook || this.config.$dataHook;
     const $errorHook = disabledErrorHook ? noop : errorHook || this.config.$errorHook;
