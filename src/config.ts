@@ -7,7 +7,7 @@ import {
   TErrorHook,
 } from './interface';
 
-export const noop = (_: any) => _;
+const noop = (_: any) => _;
 
 class Config {
   options: RequestOptionsInit = {};

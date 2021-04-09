@@ -13,6 +13,7 @@ function getRequestOptions(options: RequestOptionsInit): RequestOptionsInit {
     method,
     responseType: options.responseType || 'json',
     prefix: options.prefix || '',
+    suffix: options.suffix || '',
   };
   return requestOptions;
 }
@@ -22,23 +23,24 @@ function fetchMethod(url: string, options: RequestOptionsInit) {
   const {
     responseType,
     getResponse,
-    params,
-    serializeParams,
     prefix,
+    suffix,
+    query,
+    data,
     ...requestInit
   } = requestOptions;
 
-  let requestUrl = `${prefix}${url}`;
-  if (requestInit.method === 'GET' || serializeParams) {
-    const serialized = serialize(params);
+  let requestUrl = `${prefix}${url}${suffix}`;
+  if (requestInit.method === 'GET' || query) {
+    const serialized = serialize(query);
     if (serialized) {
       const joiner = url.indexOf('?') >= 0 ? '&' : '?';
       requestUrl = `${requestUrl}${joiner}${serialized}`;
     }
-  } else {
-    requestInit.body = stringifyParams(params);
   }
-  // console.log('fetch method called:', requestUrl, requestOptions);
+  if (!requestInit.body && data) {
+    requestInit.body = stringifyParams(data);
+  }
 
   return new Promise((resolve, reject) => {
     fetch(requestUrl, requestInit)

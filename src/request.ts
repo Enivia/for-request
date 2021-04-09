@@ -1,4 +1,4 @@
-import RequestConfig, { noop } from './config';
+import RequestConfig from './config';
 import fetch from './fetch';
 import { RequestOptions, Request, RequestOptionsInit } from './interface';
 
@@ -7,7 +7,7 @@ class RequestClass {
 
   get request() {
     const exportRequest = ((url: string, params?: any, options?: RequestOptions) => {
-      return this.$fetch(url, { ...options, params });
+      return this.$fetch(url, { query: params, ...options });
     }) as Request;
 
     exportRequest.config = this.config;
@@ -22,33 +22,21 @@ class RequestClass {
     options: RequestOptions
   ): RequestOptionsInit &
     Pick<RequestConfig, '$beforeHook' | '$afterHook' | '$dataHook' | '$errorHook'> {
-    const {
-      dataHook,
-      errorHook,
-      beforeHook,
-      afterHook,
-      disabledBeforeHook,
-      disabledAfterHook,
-      disabledDataHook,
-      disabledErrorHook,
-      ...optionsInit
-    } = { ...this.config.options, ...options };
-
-    const $beforeHook = disabledBeforeHook ? noop : beforeHook || this.config.$beforeHook;
-    const $afterHook = disabledAfterHook ? noop : afterHook || this.config.$afterHook;
-    const $dataHook = disabledDataHook ? noop : dataHook || this.config.$dataHook;
-    const $errorHook = disabledErrorHook ? noop : errorHook || this.config.$errorHook;
+    const { dataHook, errorHook, beforeHook, afterHook, ...optionsInit } = {
+      ...this.config.options,
+      ...options,
+    };
+    const $beforeHook = beforeHook || this.config.$beforeHook;
+    const $afterHook = afterHook || this.config.$afterHook;
+    const $dataHook = dataHook || this.config.$dataHook;
+    const $errorHook = errorHook || this.config.$errorHook;
     return { $beforeHook, $afterHook, $dataHook, $errorHook, ...optionsInit };
   }
 
   private $fetch(url: string, options: RequestOptions) {
-    const {
-      $beforeHook,
-      $afterHook,
-      $dataHook,
-      $errorHook,
-      ...optionsInit
-    } = this.$getOptions(options);
+    const { $beforeHook, $afterHook, $dataHook, $errorHook, ...optionsInit } = this.$getOptions(
+      options
+    );
 
     $beforeHook(url, optionsInit);
     return fetch(url, optionsInit).then(
@@ -64,16 +52,16 @@ class RequestClass {
   }
 
   get(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { ...options, method: 'get', params });
+    return this.$fetch(url, { query: params, ...options, method: 'get' });
   }
   post(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { ...options, method: 'post', params });
+    return this.$fetch(url, { data: params, ...options, method: 'post' });
   }
   put(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { ...options, method: 'put', params });
+    return this.$fetch(url, { data: params, ...options, method: 'put' });
   }
   delete(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { ...options, method: 'delete', params });
+    return this.$fetch(url, { query: params, ...options, method: 'delete' });
   }
 }
 
