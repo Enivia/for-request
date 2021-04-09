@@ -1,6 +1,7 @@
 import { RequestOptionsInit } from '../interface';
 import parseResponse from '../utils/parse-response';
 import serialize, { stringifyParams } from '../utils/serialize';
+import HttpError from '../error/HttpError';
 
 function getRequestMethod(method?: string) {
   return !method ? 'GET' : method.toUpperCase();
@@ -42,11 +43,16 @@ function fetchMethod(url: string, options: RequestOptionsInit) {
     requestInit.body = stringifyParams(data);
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     fetch(requestUrl, requestInit)
-      .then(res => parseResponse(res, requestOptions))
-      .then(resolve)
-      .catch(reject);
+      .then(response => {
+        if (response.ok) {
+          parseResponse(response, requestOptions);
+        } else {
+          throw new HttpError(response);
+        }
+      })
+      .then(resolve);
   });
 }
 

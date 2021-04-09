@@ -1,9 +1,7 @@
 enum ErrorCode {
-  Canceled = 'CANCELED',
-  NoPermission = 'NO_PERMISSION',
-  ServiceException = 'SERVICE_EXCEPTION',
-  ResultException = 'RESULT_EXCEPTION',
-  Unknown = 'UNKNOWN',
+  HttpError = 'HTTP_ERROR',
+  ParseResultError = 'PARSE_RESULT_ERROR',
+  NotSpecified = 'NOT_SPECIFIED',
 }
 
 export default ErrorCode;
