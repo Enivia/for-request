@@ -1,0 +1,58 @@
+{
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 96,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "for-request",
+  "author": "Enivia",
+  "description": "A request tool based on fetch",
+  "keywords": [
+    "fetch",
+    "request"
+  ],
+  "repository": "github:Enivia/for-request",
+  "homepage": "https://github.com/Enivia/for-request",
+  "module": "dist/for-request.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/for-request.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/for-request.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@types/qs": "^6.9.5"
+  },
+  "dependencies": {
+    "qs": "^6.9.4"
+  }
+}

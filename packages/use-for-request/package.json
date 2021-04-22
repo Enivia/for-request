@@ -1,0 +1,53 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint"
+  },
+  "peerDependencies": {
+    "react": "^16.8 || ^17.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 96,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "use-for-request",
+  "author": "Enivia",
+  "description": "React hook for for-request",
+  "keywords": [
+    "for-request",
+    "request",
+    "react hook"
+  ],
+  "repository": "github:Enivia/for-request",
+  "homepage": "https://github.com/Enivia/for-request",
+  "module": "dist/use-for-request.esm.js",
+  "dependencies": {
+    "for-request": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}

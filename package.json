@@ -1,65 +1,22 @@
 {
-  "version": "0.1.0",
-  "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "engines": {
-    "node": ">=10"
-  },
+  "name": "root",
+  "private": true,
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
+    "init": "rm -rf node_modules && yarn && yarn clean && yarn bootstrap && yarn build",
+    "clean": "lerna clean --yes",
+    "bootstrap": "lerna bootstrap",
+    "build": "lerna run build --include-dependencies --stream"
   },
-  "peerDependencies": {},
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
-  "prettier": {
-    "printWidth": 96,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
-  "name": "for-request",
-  "author": "Enivia",
-  "description": "A request tool based on fetch",
-  "keywords": [
-    "fetch",
-    "request"
-  ],
-  "repository": "github:Enivia/for-request",
-  "homepage": "https://github.com/Enivia/for-request",
-  "module": "dist/for-request.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/for-request.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/for-request.esm.js",
-      "limit": "10 KB"
-    }
+  "workspaces": [
+    "packages/*"
   ],
   "devDependencies": {
-    "@size-limit/preset-small-lib": "^4.9.1",
-    "@types/qs": "^6.9.5",
-    "husky": "^4.3.6",
+    "@size-limit/preset-small-lib": "^4.10.1",
+    "husky": "^6.0.0",
+    "lerna": "^4.0.0",
     "size-limit": "^4.9.1",
     "tsdx": "^0.14.1",
-    "tslib": "^2.0.3",
-    "typescript": "^4.1.3"
-  },
-  "dependencies": {
-    "qs": "^6.9.4"
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
   }
 }
