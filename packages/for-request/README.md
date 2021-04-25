@@ -42,17 +42,17 @@ try {
 
 ## API
 
-`request(url, [params, [options]]) // default GET method`
+`request(url, [options]) // default GET method`
 
 `request.config`
 
-`request.get(url, [params, [options]])`
+`request.get(url, [query, [options]])`
 
-`request.post(url, [params, [options]])`
+`request.post(url, [data, [options]])`
 
-`request.put(url, [params, [options]])`
+`request.put(url, [data, [options]])`
 
-`request.delete(url, [params, [options]])`
+`request.delete(url, [query, [options]])`
 
 ## Config
 

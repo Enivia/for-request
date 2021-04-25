@@ -6,8 +6,8 @@ class RequestClass {
   config = new RequestConfig();
 
   get request() {
-    const exportRequest = ((url: string, params?: any, options?: RequestOptions) => {
-      return this.$fetch(url, { query: params, ...options });
+    const exportRequest = ((url: string, options?: RequestOptions) => {
+      return this.$fetch(url, { ...options });
     }) as Request;
 
     exportRequest.config = this.config;
@@ -51,17 +51,17 @@ class RequestClass {
     );
   }
 
-  get(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { query: params, ...options, method: 'get' });
+  get(url: string, options?: RequestOptions) {
+    return this.$fetch(url, { ...options, method: 'get' });
   }
-  post(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { data: params, ...options, method: 'post' });
+  post(url: string, options?: RequestOptions) {
+    return this.$fetch(url, { ...options, method: 'post' });
   }
-  put(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { data: params, ...options, method: 'put' });
+  put(url: string, options?: RequestOptions) {
+    return this.$fetch(url, { ...options, method: 'put' });
   }
-  delete(url: string, params?: any, options?: RequestOptions) {
-    return this.$fetch(url, { query: params, ...options, method: 'delete' });
+  delete(url: string, options?: RequestOptions) {
+    return this.$fetch(url, { ...options, method: 'delete' });
   }
 }
 

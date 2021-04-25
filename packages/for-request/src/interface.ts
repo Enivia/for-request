@@ -1,10 +1,12 @@
 import Config from './config';
 
 export type ResponseType = 'json' | 'blob' | 'text';
+export type QueryParam = object | URLSearchParams;
+export type DataParam = any;
 
 export interface RequestOptionsInit extends RequestInit {
-  query?: object | URLSearchParams;
-  data?: any;
+  query?: QueryParam;
+  data?: DataParam;
   responseType?: ResponseType;
   getResponse?: boolean;
   prefix?: string;
@@ -18,11 +20,7 @@ export interface RequestOptions extends RequestOptionsInit {
   errorHook?: TErrorHook;
 }
 
-export type RequestMethod = <T>(
-  url: string,
-  params?: any,
-  options?: RequestOptions
-) => Promise<T>;
+export type RequestMethod = <T>(url: string, options?: RequestOptions) => Promise<T>;
 
 export interface Request extends RequestMethod {
   config: RequestConfig;
