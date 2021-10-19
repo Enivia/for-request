@@ -1,71 +1,71 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import request from 'for-request';
-import RequestError from 'for-request/dist/error/ResponseError';
+import ResponseError from 'for-request/dist/error/ResponseError';
 import { DataParam, QueryParam, RequestOptions } from 'for-request/dist/interface';
 
-export type TFetchOptions = { url: string; options?: RequestOptions };
+/** service options */
+export type ServiceOptions = { url: string; options?: RequestOptions };
 
-export type TBaseOptions<T> = {
+export type BaseOptions<T> = {
   /** manual trigger */
   manual?: boolean;
   /** init request data */
   initialValue?: T;
-  /** auto cancel request before component unmounted */
-  autoCancel?: boolean;
   /** cover unfinishied request */
   cover?: boolean;
-  onSuccess?: (data: T, fetchOptions: TFetchOptions) => void;
-  onError?: (error: RequestError, fetchOptions: TFetchOptions) => void;
+  onSuccess?: (data: T, fetchOptions: ServiceOptions) => void;
+  onError?: (error: ResponseError, fetchOptions: ServiceOptions) => void;
 };
-export type TOptionWithFormat<T, R> = {
+export type OptionWithFormat<T, R> = {
   formatter: (data: T) => R;
-} & TBaseOptions<R>;
-export type TOptions<T, R> = TBaseOptions<R> | TOptionWithFormat<T, R>;
+} & BaseOptions<R>;
+export type Options<T, R> = BaseOptions<R> | OptionWithFormat<T, R>;
 
-export type TStatus = 'never' | 'pending' | 'complete';
-
-export type TFetchResult<T> = {
+export type RequestResult<T> = {
   data: T | undefined;
-  error: RequestError | undefined;
-  status: TStatus;
+  error: ResponseError | undefined;
+  loading: boolean;
 };
 
-export type TTriggerParams = { query?: QueryParam; data?: DataParam };
-export type TResult<T> = {
-  trigger: (params?: TTriggerParams) => void;
+export type TriggerParams = { query?: QueryParam; data?: DataParam };
+
+export type HookResult<T> = {
+  trigger: (params?: TriggerParams) => void;
   cancel: () => void;
-  loading: boolean;
-} & TFetchResult<T>;
+} & RequestResult<T>;
 
-function useRequest<T = any, R = any>(
-  fetchOptions: TFetchOptions,
-  options: TOptionWithFormat<T, R>
-): TResult<R>;
 function useRequest<T = any>(
-  fetchOptions: TFetchOptions,
-  options?: TBaseOptions<T>
-): TResult<T>;
-function useRequest<T, R>(fetchOptions: TFetchOptions, options?: TOptions<T, R>): TResult<R> {
+  fetchOptions: ServiceOptions,
+  options?: BaseOptions<T>
+): HookResult<T>;
+function useRequest<T = any, R = any>(
+  fetchOptions: ServiceOptions,
+  options: OptionWithFormat<T, R>
+): HookResult<R>;
+function useRequest<T, R>(
+  fetchOptions: ServiceOptions,
+  options?: Options<T, R>
+): HookResult<R> {
   const { url, options: requestOptions } = fetchOptions;
-  const { manual, initialValue, autoCancel, cover, onSuccess, onError, formatter } = (options ||
-    {}) as TOptionWithFormat<T, R>;
+  const { manual, initialValue, cover, onSuccess, onError, formatter } = (options ||
+    {}) as OptionWithFormat<T, R>;
 
-  const [result, setResult] = useState<TFetchResult<R>>({
+  const [result, setResult] = useState<RequestResult<R>>({
     data: initialValue,
     error: undefined,
-    status: 'never',
+    loading: false,
   });
 
   const controller = useRef<AbortController>();
 
   const trigger = useCallback(
-    async (params?: TTriggerParams) => {
+    async (params?: TriggerParams) => {
       const { query, data } = params || {};
       if (cover) {
         controller.current?.abort();
       }
 
-      setResult(cur => ({ ...cur, status: 'pending' }));
+      setResult(cur => ({ ...cur, loading: true }));
       try {
         controller.current = new AbortController();
         const res = await request<T>(url, {
@@ -75,13 +75,11 @@ function useRequest<T, R>(fetchOptions: TFetchOptions, options?: TOptions<T, R>)
           signal: controller.current.signal,
         });
         const formarResult = (formatter ? formatter(res) : res) as any;
-
-        setResult({ data: formarResult, error: undefined, status: 'complete' });
+        setResult({ data: formarResult, error: undefined, loading: false });
         onSuccess && onSuccess(formarResult, fetchOptions);
       } catch (e) {
-        // console.error(e)
-        setResult({ data: undefined, error: e, status: 'complete' });
-        onError && onError(e, fetchOptions);
+        setResult({ data: undefined, error: e as ResponseError, loading: false });
+        onError && onError(e as ResponseError, fetchOptions);
       }
     },
     [url, requestOptions, cover, onSuccess, onError, formatter]
@@ -96,16 +94,7 @@ function useRequest<T, R>(fetchOptions: TFetchOptions, options?: TOptions<T, R>)
     if (!manual) trigger();
   }, []);
 
-  // cancel request before unmounted
-  useEffect(() => {
-    return () => {
-      if (autoCancel) {
-        controller.current?.abort();
-      }
-    };
-  }, [autoCancel]);
-
-  return { trigger, cancel, loading: result.status === 'pending', ...result };
+  return { trigger, cancel, ...result };
 }
 
 export default useRequest;

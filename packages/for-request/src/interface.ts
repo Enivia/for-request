@@ -14,10 +14,10 @@ export interface RequestOptionsInit extends RequestInit {
 }
 
 export interface RequestOptions extends RequestOptionsInit {
-  beforeHook?: TBeforeHook;
-  afterHook?: TAfterHook;
-  dataHook?: TDataHook;
-  errorHook?: TErrorHook;
+  beforeHook?: BeforeHook;
+  afterHook?: AfterHook;
+  dataHook?: DataHook;
+  errorHook?: ErrorHook;
 }
 
 export type RequestMethod = <T>(url: string, options?: RequestOptions) => Promise<T>;
@@ -30,9 +30,9 @@ export interface Request extends RequestMethod {
   delete: RequestMethod;
 }
 
-export type TBeforeHook = (url: string, options: RequestOptions) => void;
-export type TAfterHook = (url: string, options: RequestOptions) => void;
-export type TDataHook = (result: any, url: string, options: RequestOptions) => any;
-export type TErrorHook = (error: any, url: string, options: RequestOptions) => any;
+export type BeforeHook = (url: string, options: RequestOptions) => void;
+export type AfterHook = (url: string, options: RequestOptions) => void;
+export type DataHook = (result: any, url: string, options: RequestOptions) => any;
+export type ErrorHook = (error: any, url: string, options: RequestOptions) => any;
 
 export type RequestConfig = Pick<Config, 'setOptions' | 'before' | 'after' | 'data' | 'error'>;

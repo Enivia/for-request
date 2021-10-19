@@ -6,9 +6,8 @@ class RequestClass {
   config = new RequestConfig();
 
   get request() {
-    const exportRequest = ((url: string, options?: RequestOptions) => {
-      return this.$fetch(url, { ...options });
-    }) as Request;
+    const exportRequest = ((url: string, options?: RequestOptions) =>
+      this.$fetch(url, { ...options })) as Request;
 
     exportRequest.config = this.config;
     exportRequest.get = this.get.bind(this);
