@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import request from 'for-request';
 import ResponseError from 'for-request/dist/error/ResponseError';
-import { DataParam, QueryParam, RequestOptions } from 'for-request/dist/interface';
+import { RequestOptions } from 'for-request/dist/interface';
 
 /** service options */
 export type ServiceOptions = { url: string; options?: RequestOptions };
@@ -27,10 +27,12 @@ export type RequestResult<T> = {
   loading: boolean;
 };
 
-export type TriggerParams = { query?: QueryParam; data?: DataParam };
+export type RequestParams = Pick<RequestOptions, 'query' | 'data'>;
 
 export type HookResult<T> = {
-  trigger: (params?: TriggerParams) => void;
+  trigger: (params?: RequestParams) => void;
+  retry: () => void;
+  change: (data: T) => void;
   cancel: () => void;
 } & RequestResult<T>;
 
@@ -50,21 +52,21 @@ function useRequest<T, R>(
   const { manual, initialValue, cover, onSuccess, onError, formatter } = (options ||
     {}) as OptionWithFormat<T, R>;
 
+  const [params, setParams] = useState<RequestParams>();
   const [result, setResult] = useState<RequestResult<R>>({
     data: initialValue,
     error: undefined,
     loading: false,
   });
-
   const controller = useRef<AbortController>();
 
   const trigger = useCallback(
-    async (params?: TriggerParams) => {
-      const { query, data } = params || {};
+    async (requestParams?: RequestParams) => {
+      const { query, data } = requestParams || {};
       if (cover) {
         controller.current?.abort();
       }
-
+      setParams(requestParams);
       setResult(cur => ({ ...cur, loading: true }));
       try {
         controller.current = new AbortController();
@@ -85,6 +87,14 @@ function useRequest<T, R>(
     [url, requestOptions, cover, onSuccess, onError, formatter]
   );
 
+  const retry = useCallback(() => {
+    trigger(params);
+  }, [trigger, params]);
+
+  const change = useCallback((data: R) => {
+    setResult(res => ({ ...res, data }));
+  }, []);
+
   const cancel = useCallback(() => {
     controller.current?.abort();
   }, []);
@@ -94,7 +104,7 @@ function useRequest<T, R>(
     if (!manual) trigger();
   }, []);
 
-  return { trigger, cancel, ...result };
+  return { ...result, trigger, cancel, change, retry };
 }
 
 export default useRequest;
