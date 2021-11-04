@@ -13,6 +13,17 @@ export interface RequestOptionsInit extends RequestInit {
   suffix?: string;
 }
 
+export type FetchMethod = (url: string, options: RequestOptionsInit) => Promise<unknown>;
+export type Interceptor = (response: Response, options: RequestOptions) => Response;
+export interface Fetch extends FetchMethod {
+  interceptor: (handler: Interceptor, options: RequestOptionsInit) => void;
+}
+
+export type BeforeHook = (url: string, options: RequestOptions) => void;
+export type AfterHook = (url: string, options: RequestOptions) => void;
+export type DataHook = (result: any, url: string, options: RequestOptions) => any;
+export type ErrorHook = (error: any, url: string, options: RequestOptions) => any;
+
 export interface RequestOptions extends RequestOptionsInit {
   beforeHook?: BeforeHook;
   afterHook?: AfterHook;
@@ -21,7 +32,6 @@ export interface RequestOptions extends RequestOptionsInit {
 }
 
 export type RequestMethod = <T>(url: string, options?: RequestOptions) => Promise<T>;
-
 export interface Request extends RequestMethod {
   config: RequestConfig;
   get: RequestMethod;
@@ -29,10 +39,5 @@ export interface Request extends RequestMethod {
   put: RequestMethod;
   delete: RequestMethod;
 }
-
-export type BeforeHook = (url: string, options: RequestOptions) => void;
-export type AfterHook = (url: string, options: RequestOptions) => void;
-export type DataHook = (result: any, url: string, options: RequestOptions) => any;
-export type ErrorHook = (error: any, url: string, options: RequestOptions) => any;
 
 export type RequestConfig = Pick<Config, 'setOptions' | 'before' | 'after' | 'data' | 'error'>;
