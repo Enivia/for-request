@@ -7,10 +7,9 @@ import { RequestOptions } from 'for-request/dist/interface';
 export type ServiceOptions = { url: string; options?: RequestOptions };
 
 export type BaseOptions<T> = {
-  /** manual trigger */
   manual?: boolean;
-  /** init request data */
-  initialValue?: T;
+  /** init result data */
+  initialData?: T;
   /** cover unfinishied request */
   cover?: boolean;
   onSuccess?: (data: T, fetchOptions: ServiceOptions) => void;
@@ -32,7 +31,7 @@ export type RequestParams = Pick<RequestOptions, 'query' | 'data'>;
 export type HookResult<T> = {
   trigger: (params?: RequestParams) => void;
   retry: () => void;
-  change: (data: T) => void;
+  reset: (data?: T) => void;
   cancel: () => void;
 } & RequestResult<T>;
 
@@ -49,12 +48,12 @@ function useRequest<T, R>(
   options?: Options<T, R>
 ): HookResult<R> {
   const { url, options: requestOptions } = fetchOptions;
-  const { manual, initialValue, cover, onSuccess, onError, formatter } = (options ||
+  const { manual, initialData, cover, onSuccess, onError, formatter } = (options ||
     {}) as OptionWithFormat<T, R>;
 
-  const [params, setParams] = useState<RequestParams>();
+  const params = useRef<RequestParams>();
   const [result, setResult] = useState<RequestResult<R>>({
-    data: initialValue,
+    data: initialData,
     error: undefined,
     loading: false,
   });
@@ -62,21 +61,23 @@ function useRequest<T, R>(
 
   const trigger = useCallback(
     async (requestParams?: RequestParams) => {
-      const { query, data } = requestParams || {};
       if (cover) {
         controller.current?.abort();
       }
-      setParams(requestParams);
+      const paramData: RequestParams = {
+        query: requestParams?.query ?? requestOptions?.query,
+        data: requestParams?.data ?? requestOptions?.data,
+      };
+      params.current = paramData;
       setResult(cur => ({ ...cur, loading: true }));
       try {
         controller.current = new AbortController();
         const res = await request<T>(url, {
           ...requestOptions,
-          query: query ?? requestOptions?.query,
-          data: data ?? requestOptions?.data,
+          ...paramData,
           signal: controller.current.signal,
         });
-        const formarResult = (formatter ? formatter(res) : res) as any;
+        const formarResult = (formatter ? formatter(res) : res) as R;
         setResult({ data: formarResult, error: undefined, loading: false });
         onSuccess && onSuccess(formarResult, fetchOptions);
       } catch (e) {
@@ -88,11 +89,11 @@ function useRequest<T, R>(
   );
 
   const retry = useCallback(() => {
-    trigger(params);
-  }, [trigger, params]);
+    trigger(params.current);
+  }, [trigger]);
 
-  const change = useCallback((data: R) => {
-    setResult(res => ({ ...res, data }));
+  const reset = useCallback((data?: R) => {
+    setResult(res => ({ ...res, data: data || initialData }));
   }, []);
 
   const cancel = useCallback(() => {
@@ -104,7 +105,7 @@ function useRequest<T, R>(
     if (!manual) trigger();
   }, []);
 
-  return { ...result, trigger, cancel, change, retry };
+  return { ...result, trigger, cancel, reset, retry };
 }
 
 export default useRequest;
